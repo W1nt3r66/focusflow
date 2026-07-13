@@ -55,13 +55,27 @@
   border-radius: 15px;
 }
 
-/* Active-session icon uses the same red as the outline */
 .live-session-card.is-running .live-session-icon {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.22);
 
-  animation: live-session-pulse 2s infinite;
+  animation: live-session-pulse 1.8s ease-in-out infinite;
+
+  will-change: transform, box-shadow;
+}
+
+@keyframes live-session-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    transform: scale(1.06);
+  }
 }
 
 .live-session-label {
@@ -169,14 +183,5 @@
     height: 46px;
 
     border-radius: 14px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .live-session-card,
-  .live-session-card.is-running .live-session-icon,
-  .start-session-btn {
-    animation: none;
-    transition: none;
   }
 }

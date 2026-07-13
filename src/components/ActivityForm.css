@@ -136,12 +136,27 @@
   color: var(--text);
   font-family: inherit;
   font-size: 16px;
+  text-align: left;
 
   -webkit-text-fill-color: var(--text);
 }
 
-/* Fix native date/time alignment on iPhone and iPad */
-.time-input-shell input[type="time"]::-webkit-date-and-time-value {
+.form-group input[type="date"] {
+  min-height: 54px;
+
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px;
+  text-align: left;
+
+  -webkit-text-fill-color: var(--text);
+}
+
+.time-input-shell input[type="time"]::-webkit-date-and-time-value,
+.form-group input[type="date"]::-webkit-date-and-time-value {
+  display: block;
+
+  width: 100%;
   min-height: 22px;
 
   color: var(--text);
@@ -150,22 +165,41 @@
   -webkit-text-fill-color: var(--text);
 }
 
-/* Our visible placeholder for empty iOS time inputs */
+/* Hidden on desktop because desktop browsers provide their own placeholder */
 .time-input-placeholder {
-  position: absolute;
-  top: 50%;
-  left: 16px;
-
-  color: var(--text-muted);
-
-  font-size: 16px;
-
-  pointer-events: none;
-
-  transform: translateY(-50%);
+  display: none;
 }
 
-/* Ensure native controls match the selected app theme */
+/* iPhone and iPad only */
+@supports (-webkit-touch-callout: none) {
+  .time-input-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+
+    display: block;
+
+    color: var(--text-muted);
+
+    font-size: 16px;
+
+    pointer-events: none;
+
+    transform: translateY(-50%);
+  }
+
+  .form-group input[type="date"],
+  .time-input-shell input[type="time"] {
+    text-align: left;
+  }
+
+  .form-group input[type="date"]::-webkit-date-and-time-value,
+  .time-input-shell input[type="time"]::-webkit-date-and-time-value {
+    width: 100%;
+    text-align: left;
+  }
+}
+
 :root[data-theme="light"] input[type="date"],
 :root[data-theme="light"] input[type="time"] {
   color-scheme: light;
