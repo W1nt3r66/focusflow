@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Download, FileText, X } from "lucide-react";
 import { ActivityContext } from "../context/ActivityContext";
+import { SettingsContext } from "../context/SettingsContext";
 import "./AnalyticsExport.css";
 
 const focusCategories = ["Study", "Work", "Fitness"];
@@ -39,11 +40,17 @@ function escapeHtml(value) {
 
 function AnalyticsExport({ settingsMode = false }) {
   const { activities } = useContext(ActivityContext);
+  const { displayName } = useContext(SettingsContext);
 
   const [isOpen, setIsOpen] = useState(false);
   const [startDate, setStartDate] = useState(getInitialStartDate);
   const [endDate, setEndDate] = useState(() => getDateKey(new Date()));
   const [error, setError] = useState("");
+
+  const reportOwner =
+    typeof displayName === "string" && displayName.trim()
+      ? displayName.trim()
+      : "FocusFlow User";
 
   function closeExport() {
     setIsOpen(false);
@@ -128,9 +135,10 @@ function AnalyticsExport({ settingsMode = false }) {
 
     if (!reportWindow) {
       setError("The report window was blocked. Allow popups and try again.");
-
       return;
     }
+
+    const logoUrl = new URL("/focusflow-logo.svg", window.location.origin).href;
 
     const categoryRows = categoryTotals
       .map(
@@ -174,15 +182,16 @@ function AnalyticsExport({ settingsMode = false }) {
           />
 
           <title>
-            FocusFlow Report
-            ${escapeHtml(startDate)}
-            to
-            ${escapeHtml(endDate)}
+            ${escapeHtml(reportOwner)} - FocusFlow Analytics -
+            ${escapeHtml(startDate)} to ${escapeHtml(endDate)}
           </title>
 
           <style>
             * {
               box-sizing: border-box;
+
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
             }
 
             body {
@@ -202,13 +211,28 @@ function AnalyticsExport({ settingsMode = false }) {
 
             header {
               display: flex;
-              align-items: flex-end;
+              align-items: center;
               justify-content: space-between;
               gap: 24px;
 
               padding-bottom: 22px;
 
               border-bottom: 2px solid #315fa8;
+            }
+
+            .brand {
+              display: flex;
+              align-items: center;
+              gap: 14px;
+            }
+
+            .brand-logo {
+              display: block;
+
+              width: 54px;
+              height: 54px;
+
+              border-radius: 14px;
             }
 
             h1 {
@@ -219,7 +243,7 @@ function AnalyticsExport({ settingsMode = false }) {
             }
 
             header p {
-              margin: 7px 0 0;
+              margin: 5px 0 0;
 
               color: #64748b;
             }
@@ -229,7 +253,37 @@ function AnalyticsExport({ settingsMode = false }) {
 
               font-size: 13px;
               font-weight: 700;
+              line-height: 1.5;
               text-align: right;
+            }
+
+            .report-owner {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 20px;
+
+              margin-top: 22px;
+              padding: 15px 18px;
+
+              background: #f4f7fb;
+              border-left: 4px solid #315fa8;
+              border-radius: 10px;
+            }
+
+            .report-owner span {
+              color: #64748b;
+
+              font-size: 11px;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .report-owner strong {
+              color: #172033;
+
+              font-size: 18px;
             }
 
             .summary {
@@ -330,9 +384,17 @@ function AnalyticsExport({ settingsMode = false }) {
 
         <body>
           <header>
-            <div>
-              <h1>FocusFlow</h1>
-              <p>Focus activity report</p>
+            <div class="brand">
+              <img
+                class="brand-logo"
+                src="${escapeHtml(logoUrl)}"
+                alt="FocusFlow logo"
+              />
+
+              <div>
+                <h1>FocusFlow</h1>
+                <p>Focus activity report</p>
+              </div>
             </div>
 
             <div class="range">
@@ -344,9 +406,15 @@ function AnalyticsExport({ settingsMode = false }) {
             </div>
           </header>
 
+          <div class="report-owner">
+            <span>Analytics report prepared for</span>
+            <strong>${escapeHtml(reportOwner)}</strong>
+          </div>
+
           <div class="summary">
             <div class="summary-card">
               <span>TOTAL FOCUS</span>
+
               <strong>
                 ${escapeHtml(formatMinutes(totalFocusMinutes))}
               </strong>
@@ -359,6 +427,7 @@ function AnalyticsExport({ settingsMode = false }) {
 
             <div class="summary-card">
               <span>DAILY AVERAGE</span>
+
               <strong>
                 ${escapeHtml(formatMinutes(averageDailyMinutes))}
               </strong>
@@ -373,6 +442,7 @@ function AnalyticsExport({ settingsMode = false }) {
           <div class="summary">
             <div class="summary-card">
               <span>LONGEST SESSION</span>
+
               <strong>
                 ${escapeHtml(longestSession?.duration || "0m")}
               </strong>
@@ -380,6 +450,7 @@ function AnalyticsExport({ settingsMode = false }) {
 
             <div class="summary-card">
               <span>LONGEST ACTIVITY</span>
+
               <strong>
                 ${escapeHtml(longestSession?.activity || "No data")}
               </strong>
@@ -387,6 +458,7 @@ function AnalyticsExport({ settingsMode = false }) {
 
             <div class="summary-card">
               <span>MOST PRODUCTIVE DAY</span>
+
               <strong>
                 ${escapeHtml(productiveDay?.[0] || "No data")}
               </strong>
@@ -394,6 +466,7 @@ function AnalyticsExport({ settingsMode = false }) {
 
             <div class="summary-card">
               <span>PRODUCTIVE DAY FOCUS</span>
+
               <strong>
                 ${escapeHtml(formatMinutes(productiveDay?.[1] || 0))}
               </strong>
@@ -435,15 +508,17 @@ function AnalyticsExport({ settingsMode = false }) {
           </section>
 
           <footer>
-            Generated locally by FocusFlow on
-            ${escapeHtml(new Date().toLocaleString("en-IN"))}
+            FocusFlow analytics report for
+            ${escapeHtml(reportOwner)}.
+            Generated on
+            ${escapeHtml(new Date().toLocaleString("en-IN"))}.
           </footer>
 
           <script>
             window.addEventListener("load", function () {
               setTimeout(function () {
                 window.print();
-              }, 250);
+              }, 300);
             });
           </script>
         </body>
@@ -508,7 +583,8 @@ function AnalyticsExport({ settingsMode = false }) {
             <h2 id="export-title">Export Analytics</h2>
 
             <p className="analytics-export-description">
-              Select a date range for your FocusFlow report.
+              The report will be prepared for <strong>{reportOwner}</strong>.
+              Select a date range below.
             </p>
 
             <div className="analytics-export-fields">

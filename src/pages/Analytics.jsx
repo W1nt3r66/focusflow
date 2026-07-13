@@ -1,5 +1,4 @@
-import { useContext, useMemo } from "react";
-import AnalyticsExport from "../components/AnalyticsExport";
+import { useContext, useMemo, useState } from "react";
 import {
   BarChart3,
   CalendarDays,
@@ -20,12 +19,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import AnalyticsExport from "../components/AnalyticsExport";
 import AppHeader from "../components/AppHeader";
 import StreakCard from "../components/StreakCard";
 import { ActivityContext } from "../context/ActivityContext";
 import "./Analytics.css";
 
 const focusCategories = ["Study", "Work", "Fitness"];
+const rangeOptions = [7, 30, 365];
 
 const categoryColors = {
   Study: "#22a866",
@@ -56,26 +57,47 @@ function getLocalDateKey(date) {
 function Analytics() {
   const { activities } = useContext(ActivityContext);
 
+  const [rangeDays, setRangeDays] = useState(7);
+
+  function cycleRange() {
+    const currentIndex = rangeOptions.indexOf(rangeDays);
+    const nextIndex = (currentIndex + 1) % rangeOptions.length;
+
+    setRangeDays(rangeOptions[nextIndex]);
+  }
+
   const analytics = useMemo(() => {
     const now = new Date();
     const todayKey = getLocalDateKey(now);
-    const weekDates = [];
+    const rangeDates = [];
 
-    for (let offset = 6; offset >= 0; offset -= 1) {
+    for (let offset = rangeDays - 1; offset >= 0; offset -= 1) {
       const date = new Date(now);
 
       date.setHours(0, 0, 0, 0);
       date.setDate(date.getDate() - offset);
 
-      weekDates.push({
-        key: getLocalDateKey(date),
+      let shortLabel;
 
-        label: date.toLocaleDateString("en-IN", {
+      if (rangeDays === 7) {
+        shortLabel = date.toLocaleDateString("en-IN", {
           weekday: "short",
-        }),
+        });
+      } else {
+        shortLabel = date.toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+        });
+      }
 
+      rangeDates.push({
+        key: getLocalDateKey(date),
+        label: shortLabel,
         fullLabel: date.toLocaleDateString("en-IN", {
           weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
         }),
       });
     }
@@ -90,21 +112,26 @@ function Analytics() {
       .filter((item) => item.date === todayKey)
       .reduce((total, item) => total + Number(item.durationMinutes || 0), 0);
 
-    const weekDateKeys = new Set(weekDates.map((day) => day.key));
+    const rangeDateKeys = new Set(rangeDates.map((day) => day.key));
 
-    const weeklyActivities = focusActivities.filter((item) =>
-      weekDateKeys.has(item.date),
+    const periodActivities = focusActivities.filter((item) =>
+      rangeDateKeys.has(item.date),
     );
 
-    const weeklyMinutes = weeklyActivities.reduce(
+    const periodMinutes = periodActivities.reduce(
       (total, item) => total + Number(item.durationMinutes || 0),
       0,
     );
 
-    const trendData = weekDates.map((day) => {
-      const minutes = weeklyActivities
-        .filter((item) => item.date === day.key)
-        .reduce((total, item) => total + Number(item.durationMinutes || 0), 0);
+    const minutesByDate = periodActivities.reduce((totals, item) => {
+      totals[item.date] =
+        (totals[item.date] || 0) + Number(item.durationMinutes || 0);
+
+      return totals;
+    }, {});
+
+    const trendData = rangeDates.map((day) => {
+      const minutes = minutesByDate[day.key] || 0;
 
       return {
         day: day.label,
@@ -116,7 +143,7 @@ function Analytics() {
 
     const distributionData = focusCategories
       .map((category) => {
-        const minutes = weeklyActivities
+        const minutes = periodActivities
           .filter((item) => item.category === category)
           .reduce(
             (total, item) => total + Number(item.durationMinutes || 0),
@@ -137,7 +164,7 @@ function Analytics() {
       )[0] || null;
 
     const longestSession =
-      [...focusActivities].sort(
+      [...periodActivities].sort(
         (first, second) =>
           Number(second.durationMinutes || 0) -
           Number(first.durationMinutes || 0),
@@ -151,31 +178,37 @@ function Analytics() {
     const activeDays = trendData.filter((day) => day.minutes > 0).length;
 
     const averageDailyMinutes =
-      activeDays > 0 ? Math.round(weeklyMinutes / activeDays) : 0;
+      activeDays > 0 ? Math.round(periodMinutes / activeDays) : 0;
 
-    const previousThreeDays = trendData
-      .slice(1, 4)
+    const comparisonDays = rangeDays === 7 ? 3 : rangeDays === 30 ? 7 : 30;
+
+    const latestPeriodMinutes = trendData
+      .slice(-comparisonDays)
       .reduce((total, day) => total + day.minutes, 0);
 
-    const latestThreeDays = trendData
-      .slice(4, 7)
+    const previousPeriodMinutes = trendData
+      .slice(-comparisonDays * 2, -comparisonDays)
       .reduce((total, day) => total + day.minutes, 0);
 
     let recentTrend = "No trend yet";
 
-    if (previousThreeDays > 0) {
+    if (previousPeriodMinutes > 0) {
       const change = Math.round(
-        ((latestThreeDays - previousThreeDays) / previousThreeDays) * 100,
+        ((latestPeriodMinutes - previousPeriodMinutes) /
+          previousPeriodMinutes) *
+          100,
       );
 
       recentTrend = change >= 0 ? `Up ${change}%` : `Down ${Math.abs(change)}%`;
-    } else if (latestThreeDays > 0) {
+    } else if (latestPeriodMinutes > 0) {
       recentTrend = "Focus increasing";
     }
 
+    const xAxisInterval = rangeDays === 7 ? 0 : rangeDays === 30 ? 4 : 59;
+
     return {
       todayMinutes,
-      weeklyMinutes,
+      periodMinutes,
       trendData,
       distributionData,
       mostUsedCategory,
@@ -183,10 +216,11 @@ function Analytics() {
       mostProductiveDay,
       averageDailyMinutes,
       recentTrend,
+      xAxisInterval,
     };
-  }, [activities]);
+  }, [activities, rangeDays]);
 
-  const hasAnalytics = analytics.weeklyMinutes > 0;
+  const hasAnalytics = analytics.periodMinutes > 0;
 
   return (
     <div className="analytics-page">
@@ -199,18 +233,24 @@ function Analytics() {
           <h1>Analytics</h1>
 
           <p>
-            Understand how you have spent your focus time over the last seven
-            days.
+            Understand how you have spent your focus time over the last{" "}
+            {rangeDays} days.
           </p>
         </div>
 
         <div className="analytics-header-actions">
           <AnalyticsExport />
 
-          <div className="analytics-period">
+          <button
+            type="button"
+            className="analytics-period"
+            onClick={cycleRange}
+            title="Click to change analytics period"
+            aria-label={`Showing the last ${rangeDays} days. Click to change period.`}
+          >
             <CalendarDays size={18} />
-            Last 7 days
-          </div>
+            Last {rangeDays} days
+          </button>
         </div>
       </header>
 
@@ -232,9 +272,9 @@ function Analytics() {
             <BarChart3 size={20} />
           </div>
 
-          <p>Weekly Total</p>
+          <p>{rangeDays}-Day Total</p>
 
-          <strong>{formatMinutes(analytics.weeklyMinutes)}</strong>
+          <strong>{formatMinutes(analytics.periodMinutes)}</strong>
         </article>
 
         <article className="analytics-summary-card">
@@ -262,7 +302,7 @@ function Analytics() {
         <section className="analytics-empty">
           <BarChart3 size={30} />
 
-          <h2>No focus data yet</h2>
+          <h2>No focus data for this period</h2>
 
           <p>
             Complete a Study, Work, or Fitness session to begin generating
@@ -295,7 +335,13 @@ function Analytics() {
                   >
                     <CartesianGrid strokeDasharray="4 4" vertical={false} />
 
-                    <XAxis dataKey="day" axisLine={false} tickLine={false} />
+                    <XAxis
+                      dataKey="day"
+                      axisLine={false}
+                      tickLine={false}
+                      interval={analytics.xAxisInterval}
+                      minTickGap={18}
+                    />
 
                     <YAxis axisLine={false} tickLine={false} allowDecimals />
 
@@ -314,10 +360,14 @@ function Analytics() {
                       dataKey="hours"
                       stroke="var(--primary)"
                       strokeWidth={3}
-                      dot={{
-                        r: 4,
-                        fill: "var(--primary)",
-                      }}
+                      dot={
+                        rangeDays <= 30
+                          ? {
+                              r: 4,
+                              fill: "var(--primary)",
+                            }
+                          : false
+                      }
                       activeDot={{ r: 6 }}
                     />
                   </LineChart>
@@ -329,7 +379,7 @@ function Analytics() {
               <div className="analytics-panel-heading">
                 <div>
                   <p>Time allocation</p>
-                  <h2>Weekly Distribution</h2>
+                  <h2>{rangeDays}-Day Distribution</h2>
                 </div>
               </div>
 
@@ -358,7 +408,7 @@ function Analytics() {
                   </ResponsiveContainer>
 
                   <div className="analytics-donut-center">
-                    <strong>{formatMinutes(analytics.weeklyMinutes)}</strong>
+                    <strong>{formatMinutes(analytics.periodMinutes)}</strong>
 
                     <span>Total</span>
                   </div>
