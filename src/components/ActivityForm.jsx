@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
-import "./ActivityForm.css";
 import { ActivityContext } from "../context/ActivityContext";
+import "./ActivityForm.css";
 
 function ActivityForm() {
   const { addActivity } = useContext(ActivityContext);
@@ -164,23 +164,35 @@ function ActivityForm() {
         <div className="form-group">
           <label htmlFor="start-time">Start Time</label>
 
-          <input
-            id="start-time"
-            type="time"
-            value={startTime}
-            onChange={(event) => setStartTime(event.target.value)}
-          />
+          <div className="time-input-shell">
+            <input
+              id="start-time"
+              type="time"
+              value={startTime}
+              onChange={(event) => setStartTime(event.target.value)}
+            />
+
+            {!startTime && (
+              <span className="time-input-placeholder">Select time</span>
+            )}
+          </div>
         </div>
 
         <div className="form-group">
           <label htmlFor="end-time">End Time</label>
 
-          <input
-            id="end-time"
-            type="time"
-            value={endTime}
-            onChange={(event) => setEndTime(event.target.value)}
-          />
+          <div className="time-input-shell">
+            <input
+              id="end-time"
+              type="time"
+              value={endTime}
+              onChange={(event) => setEndTime(event.target.value)}
+            />
+
+            {!endTime && (
+              <span className="time-input-placeholder">Select time</span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -193,7 +205,7 @@ function ActivityForm() {
           placeholder="Anything you'd like to remember?"
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
-        ></textarea>
+        />
       </div>
 
       <button type="button" onClick={handleSubmit}>

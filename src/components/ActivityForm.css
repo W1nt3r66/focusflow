@@ -125,3 +125,53 @@
     border-radius: 20px;
   }
 }
+.time-input-shell {
+  position: relative;
+  width: 100%;
+}
+
+.time-input-shell input[type="time"] {
+  min-height: 54px;
+
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px;
+
+  -webkit-text-fill-color: var(--text);
+}
+
+/* Fix native date/time alignment on iPhone and iPad */
+.time-input-shell input[type="time"]::-webkit-date-and-time-value {
+  min-height: 22px;
+
+  color: var(--text);
+  text-align: left;
+
+  -webkit-text-fill-color: var(--text);
+}
+
+/* Our visible placeholder for empty iOS time inputs */
+.time-input-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+
+  color: var(--text-muted);
+
+  font-size: 16px;
+
+  pointer-events: none;
+
+  transform: translateY(-50%);
+}
+
+/* Ensure native controls match the selected app theme */
+:root[data-theme="light"] input[type="date"],
+:root[data-theme="light"] input[type="time"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] input[type="date"],
+:root[data-theme="dark"] input[type="time"] {
+  color-scheme: dark;
+}
