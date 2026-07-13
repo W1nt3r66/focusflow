@@ -1,0 +1,24 @@
+.add-activity-page {
+  width: 100%;
+}
+
+.add-activity-content {
+  display: grid;
+  gap: 24px;
+
+  width: 100%;
+  margin: 0;
+}
+
+.add-activity-content .live-session-card,
+.add-activity-content .set-goals-card,
+.add-activity-content .activityForm {
+  width: 100%;
+  margin: 0;
+}
+
+@media (max-width: 620px) {
+  .add-activity-content {
+    gap: 18px;
+  }
+}

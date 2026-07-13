@@ -1,0 +1,270 @@
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: var(--overlay);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  z-index: 1200;
+
+  animation: settingsOverlayIn 0.2s ease;
+}
+
+.settings-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+
+  width: min(420px, 92vw);
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--card);
+  border-left: 1px solid var(--border);
+
+  box-shadow: -20px 0 60px rgba(2, 6, 23, 0.2);
+
+  z-index: 1201;
+
+  animation: settingsDrawerIn 0.25s ease;
+}
+
+.settings-header {
+  min-height: 92px;
+  padding: 22px 24px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-header p {
+  margin: 0 0 4px;
+
+  color: var(--text-light);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.settings-header h2 {
+  margin: 0;
+
+  color: var(--text);
+  font-size: 27px;
+}
+
+.settings-close {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--hover-bg);
+  border: none;
+  border-radius: 50%;
+
+  color: var(--text-light);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    color var(--transition),
+    transform var(--transition);
+}
+
+.settings-close:hover {
+  background: var(--active-bg);
+  color: var(--primary);
+  transform: rotate(6deg);
+}
+
+.settings-content {
+  flex: 1;
+  padding: 24px;
+
+  overflow-y: auto;
+}
+
+.settings-section {
+  padding: 4px 0 28px;
+  margin-bottom: 24px;
+
+  border-bottom: 1px solid var(--border-light);
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+}
+
+.settings-section-heading {
+  margin-bottom: 16px;
+}
+
+.settings-section-heading h3 {
+  margin: 0 0 5px;
+
+  color: var(--text);
+  font-size: 17px;
+}
+
+.settings-section-heading p {
+  margin: 0;
+
+  color: var(--text-light);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.theme-options {
+  display: grid;
+  gap: 10px;
+}
+
+.theme-option,
+.settings-row {
+  width: 100%;
+  padding: 14px 15px;
+
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+
+  color: var(--text);
+  text-align: left;
+}
+
+.theme-option {
+  cursor: pointer;
+
+  transition:
+    border var(--transition),
+    background var(--transition),
+    transform var(--transition);
+}
+
+.theme-option:hover {
+  background: var(--hover-bg);
+  transform: translateY(-1px);
+}
+
+.theme-option.selected {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.theme-option span,
+.settings-row div,
+.settings-about div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.theme-option strong,
+.settings-row strong,
+.settings-about strong {
+  font-size: 14px;
+}
+
+.theme-option small,
+.settings-row small,
+.settings-about small {
+  color: var(--text-light);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.settings-action {
+  font: inherit;
+  cursor: pointer;
+}
+
+.settings-action:disabled,
+.disabled-row {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.settings-about {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  padding-bottom: 0;
+}
+
+@keyframes settingsOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes settingsDrawerIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+.display-name-field {
+  width: 100%;
+  padding: 14px 15px;
+
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+
+  color: var(--text-light);
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background var(--transition);
+}
+
+.display-name-field:focus-within {
+  background: var(--card);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.display-name-field input {
+  width: 100%;
+
+  background: transparent;
+  border: none;
+  outline: none;
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.display-name-field input::placeholder {
+  color: var(--text-muted);
+}

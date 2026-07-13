@@ -1,0 +1,100 @@
+.activity-table-card {
+  margin-top: 32px;
+  padding: 24px;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
+}
+
+.activity-table-heading {
+  margin-bottom: 20px;
+}
+
+.activity-table-heading h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 22px;
+}
+
+.activity-table-heading p {
+  margin: 5px 0 0;
+
+  color: var(--text-light);
+
+  font-size: 13px;
+}
+
+.activity-table-scroll {
+  overflow-x: auto;
+}
+
+.activity-table {
+  width: 100%;
+  min-width: 720px;
+
+  background: transparent;
+
+  border-collapse: collapse;
+}
+
+.activity-table th,
+.activity-table td {
+  padding: 14px 12px;
+
+  color: var(--text-light);
+
+  border: none;
+  border-bottom: 1px solid var(--border-light);
+
+  text-align: left;
+}
+
+.activity-table th {
+  color: var(--text-muted);
+  background: transparent;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.activity-table td {
+  font-size: 14px;
+}
+
+.activity-table td strong {
+  color: var(--text);
+}
+
+.activity-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.activity-table tbody tr {
+  transition: background var(--transition);
+}
+
+.activity-table tbody tr:hover {
+  background: var(--hover-bg);
+}
+
+.table-category {
+  display: inline-flex;
+
+  padding: 5px 9px;
+
+  color: var(--primary);
+  background: var(--active-bg);
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+}

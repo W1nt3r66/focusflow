@@ -1,0 +1,152 @@
+.live-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: var(--overlay);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  z-index: 1250;
+
+  animation: liveOverlayIn 0.2s ease;
+}
+
+.live-session-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+
+  width: min(500px, calc(100% - 32px));
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  box-shadow: 0 28px 70px rgba(2, 6, 23, 0.24);
+
+  transform: translate(-50%, -50%);
+  z-index: 1251;
+
+  overflow: hidden;
+
+  animation: liveModalIn 0.22s ease;
+}
+
+.live-modal-header {
+  padding: 22px 24px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.live-modal-header p {
+  margin: 0 0 4px;
+
+  color: var(--text-light);
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.live-modal-header h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 25px;
+}
+
+.live-modal-close {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--hover-bg);
+  border: none;
+  border-radius: 50%;
+
+  color: var(--text-light);
+
+  cursor: pointer;
+
+  transition:
+    color var(--transition),
+    background var(--transition),
+    transform var(--transition);
+}
+
+.live-modal-close:hover {
+  color: var(--primary);
+  background: var(--active-bg);
+  transform: rotate(6deg);
+}
+
+.live-modal-content {
+  padding: 24px;
+}
+
+.live-start-button {
+  width: 100%;
+  margin-top: 4px;
+  padding: 15px 18px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius-button);
+
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform var(--transition),
+    background var(--transition),
+    box-shadow var(--transition);
+}
+
+.live-start-button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px color-mix(in srgb, var(--primary) 24%, transparent);
+}
+
+.live-start-button:active {
+  transform: scale(0.98);
+}
+
+@keyframes liveOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes liveModalIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -47%) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

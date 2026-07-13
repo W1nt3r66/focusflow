@@ -1,0 +1,7 @@
+.weekly-card {
+  margin-top: 24px;
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+}

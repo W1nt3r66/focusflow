@@ -1,0 +1,8 @@
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+
+  gap: 20px;
+  width: 100%;
+  margin-top: 24px;
+}

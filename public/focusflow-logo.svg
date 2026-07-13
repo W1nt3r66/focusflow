@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="background" x1="72" y1="56" x2="440" y2="456" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3C70C0"/>
+      <stop offset="1" stop-color="#294F91"/>
+    </linearGradient>
+    <filter id="ringShadow" x="54" y="62" width="420" height="428" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#153461" flood-opacity="0.48"/>
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="white" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="120" fill="url(#background)"/>
+
+  <g filter="url(#ringShadow)">
+    <circle cx="256" cy="246" r="142" stroke="white" stroke-width="42"/>
+  </g>
+</svg>

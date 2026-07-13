@@ -1,0 +1,273 @@
+.hero-card {
+  width: 100%;
+  margin-top: 24px;
+  padding: clamp(30px, 5vw, 52px);
+
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(230px, 0.7fr);
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.hero-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Greeting section */
+
+.hero-date {
+  margin: 0;
+
+  color: var(--text-light);
+
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.hero-title {
+  margin: 14px 0 16px;
+
+  color: var(--text);
+
+  font-size: clamp(34px, 5vw, 58px);
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.hero-title span {
+  display: block;
+
+  margin-top: 6px;
+
+  color: var(--primary);
+
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
+.hero-message {
+  margin: 0;
+
+  color: var(--text-light);
+
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.6;
+}
+
+/* Today's Focus section */
+
+.hero-focus {
+  padding-left: clamp(26px, 4vw, 48px);
+
+  display: flex;
+  flex-direction: column;
+
+  border-left: 1px solid var(--border);
+}
+
+.focus-label {
+  margin: 0 0 14px;
+
+  color: var(--text-light);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Hours and minutes arranged vertically */
+
+.focus-time {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  margin-bottom: 24px;
+}
+
+.focus-hours {
+  color: var(--text);
+
+  font-size: clamp(48px, 7vw, 74px);
+  line-height: 0.95;
+  font-weight: 750;
+  letter-spacing: -0.05em;
+}
+
+.focus-minutes {
+  margin-top: 8px;
+
+  color: var(--primary);
+
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+/* Progress */
+
+.focus-progress {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 14px;
+}
+
+.progress-track {
+  flex: 1;
+  height: 10px;
+
+  background: var(--hover-bg);
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+.progress-value {
+  height: 100%;
+
+  background: var(--primary);
+  border-radius: 999px;
+
+  transition: width 0.4s ease;
+}
+
+.progress-percentage {
+  min-width: 38px;
+
+  color: var(--text-light);
+
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.focus-status {
+  margin: 0;
+
+  color: var(--success);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Responsive mobile layout */
+
+@media (max-width: 700px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .hero-focus {
+    padding-top: 26px;
+    padding-left: 0;
+
+    border-top: 1px solid var(--border);
+    border-left: none;
+  }
+
+  .focus-progress {
+    max-width: 420px;
+  }
+}
+.hero-goals {
+  display: grid;
+  gap: 12px;
+
+  width: 100%;
+  margin-top: 22px;
+}
+
+.hero-goal-row {
+  width: 100%;
+}
+
+.hero-goal-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 6px;
+
+  color: var(--text-light);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hero-goal-heading > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.hero-goal-heading strong {
+  color: var(--text);
+
+  font-size: 11px;
+}
+
+.hero-goal-dot {
+  display: block;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+}
+
+.hero-goal-track {
+  width: 100%;
+  height: 6px;
+
+  overflow: hidden;
+
+  background: var(--input-bg);
+
+  border-radius: 999px;
+}
+
+.hero-goal-value {
+  height: 100%;
+
+  border-radius: inherit;
+
+  transition: width var(--transition);
+}
+
+.hero-goal-row > p {
+  margin: 5px 0 0;
+
+  color: var(--text-muted);
+
+  font-size: 10px;
+}
+
+.hero-no-goals {
+  margin: 20px 0 0;
+
+  color: var(--text-muted);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hero-goals + .focus-status,
+.hero-no-goals + .focus-status {
+  margin-top: 14px;
+}

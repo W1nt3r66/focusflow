@@ -1,0 +1,146 @@
+.recent-activity {
+  width: 100%;
+  margin-top: 24px;
+  padding: clamp(24px, 4vw, 34px);
+
+  background: var(--card);
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
+}
+
+.recent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 22px;
+}
+
+.recent-label {
+  margin: 0 0 5px;
+
+  color: var(--text-light);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.recent-header h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: clamp(24px, 3vw, 30px);
+}
+
+.recent-header > span {
+  padding: 7px 11px;
+
+  background: var(--hover-bg);
+  border-radius: 999px;
+
+  color: var(--text-light);
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.recent-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+
+  padding: 18px 0;
+
+  border-bottom: 1px solid var(--border-light);
+
+  transition: transform 0.2s ease;
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-item:hover {
+  transform: translateX(3px);
+}
+
+.recent-main {
+  min-width: 0;
+}
+
+.category-chip {
+  display: inline-block;
+
+  margin-bottom: 8px;
+  padding: 5px 9px;
+
+  background: var(--primary-soft);
+  border-radius: 999px;
+
+  color: var(--primary);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.recent-item h3 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 17px;
+}
+
+.recent-item p {
+  margin: 6px 0 0;
+
+  color: var(--text-light);
+
+  font-size: 14px;
+}
+
+.recent-item strong {
+  flex-shrink: 0;
+
+  color: var(--text);
+
+  font-size: 18px;
+}
+
+.recent-empty {
+  padding: 34px 12px;
+  text-align: center;
+}
+
+.recent-empty h3 {
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.recent-empty p {
+  margin: 0;
+  color: var(--text-light);
+}
+
+@media (max-width: 560px) {
+  .recent-item {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .recent-item strong {
+    font-size: 16px;
+  }
+
+  .recent-item p {
+    line-height: 1.5;
+  }
+}

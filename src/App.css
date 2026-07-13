@@ -1,0 +1,39 @@
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #f7f9fc 0%, #eef3fa 100%);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.app {
+  padding: 40px;
+}
+
+.card-container {
+  display: grid;
+
+  grid-template-columns:
+    300px
+    2fr
+    repeat(3, 220px);
+
+  gap: 22px;
+
+  align-items: start;
+}
+.home-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 20px 120px;
+}
+.home-page,
+.analytics-page,
+.page {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+.add-activity-wrapper {
+  width: 100%;
+  display: grid;
+  justify-content: start center;
+  margin-top: 24px;
+}
