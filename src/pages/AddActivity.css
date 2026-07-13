@@ -22,3 +22,27 @@
     gap: 18px;
   }
 }
+.add-activity-content .live-session-card,
+.add-activity-content .set-goals-card,
+.add-activity-content .activityForm {
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .add-activity-content .live-session-card:hover,
+  .add-activity-content .set-goals-card:hover,
+  .add-activity-content .activityForm:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .add-activity-content .live-session-card,
+  .add-activity-content .set-goals-card,
+  .add-activity-content .activityForm {
+    transition: none;
+  }
+}

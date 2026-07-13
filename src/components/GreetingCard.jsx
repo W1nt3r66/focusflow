@@ -25,19 +25,102 @@ function getDateKey(date) {
 
 function formatMinutes(totalMinutes) {
   const minutes = Number(totalMinutes) || 0;
-
   const hours = Math.floor(minutes / 60);
-
   const remainingMinutes = minutes % 60;
 
   return `${hours}h ${remainingMinutes}m`;
 }
 
+function getIncludedDayCount(startDate, endDate, excludedWeekdays = []) {
+  const excludedDays = new Set(excludedWeekdays.map(Number));
+  const currentDate = new Date(`${startDate}T00:00:00Z`);
+  const finalDate = new Date(`${endDate}T00:00:00Z`);
+
+  let includedDays = 0;
+
+  while (currentDate <= finalDate) {
+    if (!excludedDays.has(currentDate.getUTCDay())) {
+      includedDays += 1;
+    }
+
+    currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+  }
+
+  return Math.max(1, includedDays);
+}
+
+function GoalRows({ goals, mode }) {
+  return (
+    <div className="hero-goals">
+      {goals.map((goal) => {
+        const isDaily = mode === "daily";
+
+        const percentage = isDaily
+          ? goal.dailyPercentage
+          : goal.periodPercentage;
+
+        const currentMinutes = isDaily ? goal.todayMinutes : goal.periodMinutes;
+
+        const targetMinutes = isDaily
+          ? goal.dailyTargetMinutes
+          : goal.targetMinutes;
+
+        const showRestDay = isDaily && goal.isRestDay;
+
+        return (
+          <div className="hero-goal-row" key={`${goal.id}-${mode}`}>
+            <div className="hero-goal-heading">
+              <span>
+                <i
+                  className="hero-goal-dot"
+                  style={{
+                    backgroundColor: goalColors[goal.category],
+                  }}
+                />
+
+                {goal.category}
+              </span>
+
+              <strong>{showRestDay ? "Rest" : `${percentage}%`}</strong>
+            </div>
+
+            {showRestDay ? (
+              <div className="hero-goal-rest-track" />
+            ) : (
+              <div className="hero-goal-track">
+                <div
+                  className="hero-goal-value"
+                  style={{
+                    width: `${percentage}%`,
+                    backgroundColor: goalColors[goal.category],
+                  }}
+                />
+              </div>
+            )}
+
+            <p>
+              {showRestDay ? (
+                "Excluded from today’s target"
+              ) : (
+                <>
+                  {formatMinutes(currentMinutes)} of{" "}
+                  {formatMinutes(targetMinutes)}
+                  {!isDaily && (
+                    <> · {goal.period === "weekly" ? "Weekly" : "Monthly"}</>
+                  )}
+                </>
+              )}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function GreetingCard() {
   const { activities, activeSession } = useContext(ActivityContext);
-
   const { activeGoals } = useContext(GoalsContext);
-
   const { displayName } = useContext(SettingsContext);
 
   const [liveMinutes, setLiveMinutes] = useState(0);
@@ -54,7 +137,6 @@ function GreetingCard() {
     }
 
     const initialUpdate = setTimeout(updateLiveMinutes, 0);
-
     const interval = setInterval(updateLiveMinutes, 10000);
 
     return () => {
@@ -98,11 +180,14 @@ function GreetingCard() {
   const todayFocusMinutes = completedTodayMinutes + runningTodayMinutes;
 
   const focusHours = Math.floor(todayFocusMinutes / 60);
-
   const focusMinutes = todayFocusMinutes % 60;
 
   const goalProgress = activeGoals.map((goal) => {
-    const completedMinutes = activities
+    const excludedWeekdays = Array.isArray(goal.excludedWeekdays)
+      ? goal.excludedWeekdays.map(Number)
+      : [];
+
+    const completedPeriodMinutes = activities
       .filter(
         (item) =>
           item.category === goal.category &&
@@ -111,27 +196,53 @@ function GreetingCard() {
       )
       .reduce((total, item) => total + Number(item.durationMinutes || 0), 0);
 
+    const completedCategoryTodayMinutes = activities
+      .filter((item) => item.category === goal.category && item.date === today)
+      .reduce((total, item) => total + Number(item.durationMinutes || 0), 0);
+
     const includesRunningSession =
       activeSession &&
       activeSession.category === goal.category &&
       today >= goal.startDate &&
       today <= goal.endDate;
 
-    const currentMinutes =
-      completedMinutes + (includesRunningSession ? liveMinutes : 0);
+    const runningGoalMinutes = includesRunningSession ? liveMinutes : 0;
+
+    const periodMinutes = completedPeriodMinutes + runningGoalMinutes;
+
+    const todayMinutes = completedCategoryTodayMinutes + runningGoalMinutes;
 
     const targetMinutes = Number(goal.targetMinutes) || 0;
 
-    const percentage =
+    const includedDayCount = getIncludedDayCount(
+      goal.startDate,
+      goal.endDate,
+      excludedWeekdays,
+    );
+
+    const dailyTargetMinutes = Math.ceil(targetMinutes / includedDayCount);
+
+    const isRestDay = excludedWeekdays.includes(now.getDay());
+
+    const periodPercentage =
       targetMinutes > 0
-        ? Math.min(Math.round((currentMinutes / targetMinutes) * 100), 100)
+        ? Math.min(Math.round((periodMinutes / targetMinutes) * 100), 100)
+        : 0;
+
+    const dailyPercentage =
+      !isRestDay && dailyTargetMinutes > 0
+        ? Math.min(Math.round((todayMinutes / dailyTargetMinutes) * 100), 100)
         : 0;
 
     return {
       ...goal,
-      currentMinutes,
+      periodMinutes,
+      todayMinutes,
       targetMinutes,
-      percentage,
+      dailyTargetMinutes,
+      periodPercentage,
+      dailyPercentage,
+      isRestDay,
     };
   });
 
@@ -173,40 +284,18 @@ function GreetingCard() {
         </div>
 
         {goalProgress.length > 0 ? (
-          <div className="hero-goals">
-            {goalProgress.map((goal) => (
-              <div className="hero-goal-row" key={goal.id}>
-                <div className="hero-goal-heading">
-                  <span>
-                    <i
-                      className="hero-goal-dot"
-                      style={{
-                        backgroundColor: goalColors[goal.category],
-                      }}
-                    />
+          <div className="hero-goal-sections">
+            <section className="hero-goal-section">
+              <p className="hero-goal-section-title">Daily goals</p>
 
-                    {goal.category}
-                  </span>
+              <GoalRows goals={goalProgress} mode="daily" />
+            </section>
 
-                  <strong>{goal.percentage}%</strong>
-                </div>
+            <section className="hero-goal-section">
+              <p className="hero-goal-section-title">Weekly / monthly goals</p>
 
-                <div className="hero-goal-track">
-                  <div
-                    className="hero-goal-value"
-                    style={{
-                      width: `${goal.percentage}%`,
-                      backgroundColor: goalColors[goal.category],
-                    }}
-                  />
-                </div>
-
-                <p>
-                  {formatMinutes(goal.currentMinutes)} of{" "}
-                  {formatMinutes(goal.targetMinutes)}
-                </p>
-              </div>
-            ))}
+              <GoalRows goals={goalProgress} mode="period" />
+            </section>
           </div>
         ) : (
           <p className="hero-no-goals">No active goals</p>

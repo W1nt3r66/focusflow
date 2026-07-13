@@ -22,9 +22,7 @@ function getInitialStartDate() {
 
 function formatMinutes(totalMinutes) {
   const minutes = Number(totalMinutes) || 0;
-
   const hours = Math.floor(minutes / 60);
-
   const remainingMinutes = minutes % 60;
 
   return `${hours}h ${remainingMinutes}m`;
@@ -39,15 +37,12 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function AnalyticsExport() {
+function AnalyticsExport({ settingsMode = false }) {
   const { activities } = useContext(ActivityContext);
 
   const [isOpen, setIsOpen] = useState(false);
-
   const [startDate, setStartDate] = useState(getInitialStartDate);
-
   const [endDate, setEndDate] = useState(() => getDateKey(new Date()));
-
   const [error, setError] = useState("");
 
   function closeExport() {
@@ -58,13 +53,11 @@ function AnalyticsExport() {
   function generateReport() {
     if (!startDate || !endDate) {
       setError("Select both a start and end date.");
-
       return;
     }
 
     if (startDate > endDate) {
       setError("The start date must be before the end date.");
-
       return;
     }
 
@@ -84,7 +77,6 @@ function AnalyticsExport() {
 
     if (selectedActivities.length === 0) {
       setError("No activities were found in this date range.");
-
       return;
     }
 
@@ -105,7 +97,6 @@ function AnalyticsExport() {
       "Break",
     ].map((category) => ({
       category,
-
       minutes: selectedActivities
         .filter((item) => item.category === category)
         .reduce((total, item) => total + Number(item.durationMinutes || 0), 0),
@@ -155,19 +146,19 @@ function AnalyticsExport() {
     const activityRows = selectedActivities
       .map(
         (item) => `
-            <tr>
-              <td>${escapeHtml(item.date)}</td>
-              <td>${escapeHtml(item.activity)}</td>
-              <td>${escapeHtml(item.category)}</td>
-              <td>
-                ${escapeHtml(item.startTime)}
-                &ndash;
-                ${escapeHtml(item.endTime)}
-              </td>
-              <td>${escapeHtml(item.duration)}</td>
-              <td>${escapeHtml(item.entryType || "manual")}</td>
-            </tr>
-          `,
+          <tr>
+            <td>${escapeHtml(item.date)}</td>
+            <td>${escapeHtml(item.activity)}</td>
+            <td>${escapeHtml(item.category)}</td>
+            <td>
+              ${escapeHtml(item.startTime)}
+              &ndash;
+              ${escapeHtml(item.endTime)}
+            </td>
+            <td>${escapeHtml(item.duration)}</td>
+            <td>${escapeHtml(item.entryType || "manual")}</td>
+          </tr>
+        `,
       )
       .join("");
 
@@ -183,7 +174,10 @@ function AnalyticsExport() {
           />
 
           <title>
-            FocusFlow Report ${escapeHtml(startDate)} to ${escapeHtml(endDate)}
+            FocusFlow Report
+            ${escapeHtml(startDate)}
+            to
+            ${escapeHtml(endDate)}
           </title>
 
           <style>
@@ -235,14 +229,12 @@ function AnalyticsExport() {
 
               font-size: 13px;
               font-weight: 700;
-
               text-align: right;
             }
 
             .summary {
               display: grid;
-              grid-template-columns:
-                repeat(4, 1fr);
+              grid-template-columns: repeat(4, 1fr);
               gap: 12px;
 
               margin: 24px 0;
@@ -293,8 +285,7 @@ function AnalyticsExport() {
             td {
               padding: 10px 8px;
 
-              border-bottom:
-                1px solid #e2e8f0;
+              border-bottom: 1px solid #e2e8f0;
 
               font-size: 11px;
               text-align: left;
@@ -314,8 +305,7 @@ function AnalyticsExport() {
 
               color: #94a3b8;
 
-              border-top:
-                1px solid #e2e8f0;
+              border-top: 1px solid #e2e8f0;
 
               font-size: 10px;
               text-align: center;
@@ -357,7 +347,6 @@ function AnalyticsExport() {
           <div class="summary">
             <div class="summary-card">
               <span>TOTAL FOCUS</span>
-
               <strong>
                 ${escapeHtml(formatMinutes(totalFocusMinutes))}
               </strong>
@@ -365,15 +354,11 @@ function AnalyticsExport() {
 
             <div class="summary-card">
               <span>SESSIONS</span>
-
-              <strong>
-                ${selectedActivities.length}
-              </strong>
+              <strong>${selectedActivities.length}</strong>
             </div>
 
             <div class="summary-card">
               <span>DAILY AVERAGE</span>
-
               <strong>
                 ${escapeHtml(formatMinutes(averageDailyMinutes))}
               </strong>
@@ -381,17 +366,13 @@ function AnalyticsExport() {
 
             <div class="summary-card">
               <span>ACTIVE DAYS</span>
-
-              <strong>
-                ${activeDays}
-              </strong>
+              <strong>${activeDays}</strong>
             </div>
           </div>
 
           <div class="summary">
             <div class="summary-card">
               <span>LONGEST SESSION</span>
-
               <strong>
                 ${escapeHtml(longestSession?.duration || "0m")}
               </strong>
@@ -399,7 +380,6 @@ function AnalyticsExport() {
 
             <div class="summary-card">
               <span>LONGEST ACTIVITY</span>
-
               <strong>
                 ${escapeHtml(longestSession?.activity || "No data")}
               </strong>
@@ -407,7 +387,6 @@ function AnalyticsExport() {
 
             <div class="summary-card">
               <span>MOST PRODUCTIVE DAY</span>
-
               <strong>
                 ${escapeHtml(productiveDay?.[0] || "No data")}
               </strong>
@@ -415,7 +394,6 @@ function AnalyticsExport() {
 
             <div class="summary-card">
               <span>PRODUCTIVE DAY FOCUS</span>
-
               <strong>
                 ${escapeHtml(formatMinutes(productiveDay?.[1] || 0))}
               </strong>
@@ -433,9 +411,7 @@ function AnalyticsExport() {
                 </tr>
               </thead>
 
-              <tbody>
-                ${categoryRows}
-              </tbody>
+              <tbody>${categoryRows}</tbody>
             </table>
           </section>
 
@@ -454,9 +430,7 @@ function AnalyticsExport() {
                 </tr>
               </thead>
 
-              <tbody>
-                ${activityRows}
-              </tbody>
+              <tbody>${activityRows}</tbody>
             </table>
           </section>
 
@@ -466,14 +440,11 @@ function AnalyticsExport() {
           </footer>
 
           <script>
-            window.addEventListener(
-              "load",
-              function () {
-                setTimeout(function () {
-                  window.print();
-                }, 250);
-              },
-            );
+            window.addEventListener("load", function () {
+              setTimeout(function () {
+                window.print();
+              }, 250);
+            });
           </script>
         </body>
       </html>
@@ -487,11 +458,22 @@ function AnalyticsExport() {
     <>
       <button
         type="button"
-        className="analytics-export-btn"
+        className={
+          settingsMode ? "settings-row settings-action" : "analytics-export-btn"
+        }
         onClick={() => setIsOpen(true)}
       >
         <Download size={17} />
-        Export Report
+
+        {settingsMode ? (
+          <div>
+            <strong>Export activities</strong>
+
+            <small>Create a report for a selected date range</small>
+          </div>
+        ) : (
+          <span>Export Report</span>
+        )}
       </button>
 
       {isOpen && (
@@ -538,7 +520,6 @@ function AnalyticsExport() {
                   max={endDate}
                   onChange={(event) => {
                     setStartDate(event.target.value);
-
                     setError("");
                   }}
                 />
@@ -553,7 +534,6 @@ function AnalyticsExport() {
                   max={getDateKey(new Date())}
                   onChange={(event) => {
                     setEndDate(event.target.value);
-
                     setError("");
                   }}
                 />

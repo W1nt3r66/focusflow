@@ -172,6 +172,66 @@
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent);
 }
 
+.goal-days-fieldset {
+  margin: 18px 0 0;
+  padding: 16px;
+
+  background: var(--input-bg);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+}
+
+.goal-days-fieldset legend {
+  padding: 0 6px;
+
+  color: var(--text);
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.goal-days-fieldset > p {
+  margin: 0 0 12px;
+
+  color: var(--text-light);
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.goal-day-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.goal-day-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  color: var(--text);
+  background: var(--card);
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+}
+
+.goal-day-option input {
+  width: 16px;
+  height: 16px;
+
+  accent-color: var(--primary);
+}
+
 .set-goal-message {
   margin: 12px 0 0;
 
@@ -200,10 +260,28 @@
   font-weight: 700;
 
   cursor: pointer;
+
+  transition:
+    background var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
 }
 
 .lock-goal-btn:hover {
   background: var(--primary-hover);
+
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--primary) 25%, transparent);
+
+  transform: translateY(-2px);
+}
+
+.lock-goal-btn:active {
+  transform: scale(0.98);
+}
+
+.lock-goal-btn:focus-visible {
+  outline: 3px solid var(--active-bg);
+  outline-offset: 3px;
 }
 
 .all-goals-set {
@@ -222,16 +300,6 @@
   font-weight: 700;
 }
 
-@media (max-width: 720px) {
-  .set-goal-fields {
-    grid-template-columns: 1fr;
-  }
-
-  .active-goal-footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
 .goal-confirm-overlay {
   position: fixed;
   inset: 0;
@@ -321,6 +389,11 @@
   border-radius: 12px;
 }
 
+.goal-confirm-popup .goal-confirm-schedule {
+  color: var(--text);
+  background: var(--active-bg);
+}
+
 .goal-confirm-actions {
   display: grid;
   grid-template-columns: 1fr 1.4fr;
@@ -359,6 +432,17 @@
 
 .goal-confirm-submit:hover {
   background: var(--primary-hover);
+}
+
+@media (max-width: 720px) {
+  .set-goal-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .active-goal-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 480px) {

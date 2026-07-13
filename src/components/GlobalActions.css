@@ -3,7 +3,9 @@
   top: 24px;
   right: clamp(20px, 4vw, 42px);
 
-  display: flex;
+  display: grid;
+  grid-template-columns: 76px 46px;
+  align-items: center;
   gap: 12px;
 
   z-index: 1050;
@@ -16,14 +18,14 @@
   display: grid;
   place-items: center;
 
+  color: var(--text-light);
   background: color-mix(in srgb, var(--card) 94%, transparent);
+
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 
   border: 1px solid var(--border);
   border-radius: 50%;
-
-  color: var(--text-light);
 
   box-shadow: var(--shadow);
 
@@ -39,45 +41,43 @@
 .global-action-button:hover {
   color: var(--primary);
   background: var(--active-bg);
-  transform: translateY(-2px);
+
   box-shadow: var(--shadow-hover);
+
+  transform: translateY(-2px);
 }
 
-@media (max-width: 520px) {
-  .global-actions {
-    top: 14px;
-    right: 14px;
-  }
-
-  .global-action-button {
-    width: 42px;
-    height: 42px;
-  }
-}
 .live-action-button {
-  min-width: 68px;
+  width: 76px;
+  min-width: 76px;
   height: 46px;
+  padding: 0;
 
-  padding: 0 16px;
+  justify-self: center;
+
+  color: #ffffff;
+  background: var(--primary);
 
   border-radius: 999px;
 
-  background: var(--primary);
-  color: white;
-
-  font-weight: 700;
   font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
 
-  transition: all var(--transition);
+.live-action-button:hover {
+  color: #ffffff;
+  background: var(--primary-hover);
 }
 
 .live-action-button.running {
   background: #22c55e;
 
-  animation: pulse 2s infinite;
+  animation: timerPulse 2s infinite;
 }
 
-@keyframes pulse {
+@keyframes timerPulse {
   0% {
     box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.35);
   }
@@ -91,36 +91,31 @@
   }
 }
 
-.live-action-button:hover {
-  background: var(--primary-hover);
-  color: #ffffff;
-}
-.global-actions {
-  display: grid;
-  grid-template-columns: 46px 76px 46px;
-  align-items: center;
-  gap: 12px;
-}
-
-.live-action-button {
-  width: 76px;
-  min-width: 76px;
-  padding: 0;
-
-  justify-self: center;
-
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
 @media (max-width: 520px) {
   .global-actions {
-    grid-template-columns: 42px 72px 42px;
+    top: 14px;
+    right: 14px;
+
+    grid-template-columns: 72px 42px;
     gap: 10px;
+  }
+
+  .global-action-button {
+    width: 42px;
+    height: 42px;
   }
 
   .live-action-button {
     width: 72px;
     min-width: 72px;
+    height: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .global-action-button,
+  .live-action-button {
+    transition: none;
+    animation: none;
   }
 }

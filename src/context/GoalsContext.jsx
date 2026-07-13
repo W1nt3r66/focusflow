@@ -19,11 +19,9 @@ function getPeriodDates(period) {
 
   if (period === "monthly") {
     start = new Date(now.getFullYear(), now.getMonth(), 1);
-
     end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   } else {
     const day = now.getDay();
-
     const daysFromMonday = day === 0 ? 6 : day - 1;
 
     start = new Date(now);
@@ -73,7 +71,7 @@ export function GoalsProvider({ children }) {
 
   const activeGoals = Object.values(goals).filter((goal) => isGoalActive(goal));
 
-  function setGoal(category, period, targetHours) {
+  function setGoal(category, period, targetHours, excludedWeekdays = []) {
     if (
       !allowedCategories.includes(category) ||
       !["weekly", "monthly"].includes(period)
@@ -91,6 +89,12 @@ export function GoalsProvider({ children }) {
       return false;
     }
 
+    const safeExcludedWeekdays = Array.isArray(excludedWeekdays)
+      ? [...new Set(excludedWeekdays.map(Number))].filter((day) =>
+          [0, 6].includes(day),
+        )
+      : [];
+
     const { startDate, endDate } = getPeriodDates(period);
 
     const newGoal = {
@@ -98,6 +102,7 @@ export function GoalsProvider({ children }) {
       category,
       period,
       targetMinutes: Math.round(hours * 60),
+      excludedWeekdays: safeExcludedWeekdays,
       startDate,
       endDate,
       createdAt: new Date().toISOString(),

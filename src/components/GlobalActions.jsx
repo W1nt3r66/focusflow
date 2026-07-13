@@ -1,6 +1,5 @@
-import { Bell, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import LiveTimerButton from "./LiveTimerButton";
-
 import "./GlobalActions.css";
 
 function GlobalActions({
@@ -11,17 +10,18 @@ function GlobalActions({
 }) {
   return (
     <div className="global-actions">
-      <button className="global-action-button" aria-label="Notifications">
-        <Bell size={20} />
-      </button>
-
       <LiveTimerButton
         activeSession={activeSession}
         onStartClick={onLiveSessionClick}
         onRunningClick={onRunningSessionClick}
       />
 
-      <button className="global-action-button" onClick={onSettingsClick}>
+      <button
+        type="button"
+        className="global-action-button"
+        onClick={onSettingsClick}
+        aria-label="Open settings"
+      >
         <Settings size={20} />
       </button>
     </div>

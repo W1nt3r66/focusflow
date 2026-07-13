@@ -8,27 +8,38 @@ const categories = ["Study", "Work", "Fitness"];
 
 function formatMinutes(totalMinutes) {
   const minutes = Number(totalMinutes) || 0;
-
   const hours = Math.floor(minutes / 60);
-
   const remainingMinutes = minutes % 60;
 
   return `${hours}h ${remainingMinutes}m`;
 }
 
+function getScheduleLabel(excludedWeekdays) {
+  if (excludedWeekdays.length === 0) {
+    return "Every day";
+  }
+
+  if (excludedWeekdays.length === 2) {
+    return "Monday to Friday";
+  }
+
+  if (excludedWeekdays.includes(6)) {
+    return "Sunday to Friday";
+  }
+
+  return "Monday to Saturday";
+}
+
 function SetGoalsCard() {
   const { activities } = useContext(ActivityContext);
-
   const { goals, setGoal } = useContext(GoalsContext);
 
   const [category, setCategory] = useState("Study");
-
   const [period, setPeriod] = useState("weekly");
-
   const [targetHours, setTargetHours] = useState("");
-
+  const [excludeSaturday, setExcludeSaturday] = useState(false);
+  const [excludeSunday, setExcludeSunday] = useState(false);
   const [message, setMessage] = useState("");
-
   const [pendingGoal, setPendingGoal] = useState(null);
 
   const activeCategories = categories.filter((item) =>
@@ -61,7 +72,6 @@ function SetGoalsCard() {
 
     if (!selectedCategory || !Number.isFinite(hours) || hours <= 0) {
       setMessage("Enter a valid target greater than zero.");
-
       return;
     }
 
@@ -71,6 +81,10 @@ function SetGoalsCard() {
       category: selectedCategory,
       period,
       targetHours: hours,
+      excludedWeekdays: [
+        ...(excludeSunday ? [0] : []),
+        ...(excludeSaturday ? [6] : []),
+      ],
     });
   }
 
@@ -87,16 +101,18 @@ function SetGoalsCard() {
       pendingGoal.category,
       pendingGoal.period,
       pendingGoal.targetHours,
+      pendingGoal.excludedWeekdays,
     );
 
     if (!created) {
       setMessage("This goal could not be created.");
-
       setPendingGoal(null);
       return;
     }
 
     setTargetHours("");
+    setExcludeSaturday(false);
+    setExcludeSunday(false);
     setMessage("Goal locked successfully.");
 
     const nextCategory = availableCategories.find(
@@ -132,13 +148,18 @@ function SetGoalsCard() {
         <div className="active-goals-list">
           {activeCategories.map((goalCategory) => {
             const goal = goals[goalCategory];
-
             const completedMinutes = getGoalProgress(goal);
 
             const percentage = Math.min(
-              Math.round((completedMinutes / goal.targetMinutes) * 100),
+              Math.round(
+                (completedMinutes / Number(goal.targetMinutes || 1)) * 100,
+              ),
               100,
             );
+
+            const excludedWeekdays = Array.isArray(goal.excludedWeekdays)
+              ? goal.excludedWeekdays
+              : [];
 
             return (
               <article className="active-goal-row" key={goal.id}>
@@ -165,6 +186,8 @@ function SetGoalsCard() {
                     {goal.period === "weekly" ? "Weekly" : "Monthly"} goal
                   </span>
 
+                  <span>{getScheduleLabel(excludedWeekdays)}</span>
+
                   <span>
                     <Lock size={12} />
                     Locked until {goal.endDate}
@@ -187,7 +210,6 @@ function SetGoalsCard() {
                 value={selectedCategory}
                 onChange={(event) => {
                   setCategory(event.target.value);
-
                   setMessage("");
                 }}
               >
@@ -205,12 +227,10 @@ function SetGoalsCard() {
                 value={period}
                 onChange={(event) => {
                   setPeriod(event.target.value);
-
                   setMessage("");
                 }}
               >
                 <option value="weekly">Weekly</option>
-
                 <option value="monthly">Monthly</option>
               </select>
             </label>
@@ -225,12 +245,48 @@ function SetGoalsCard() {
                 placeholder="10"
                 onChange={(event) => {
                   setTargetHours(event.target.value);
-
                   setMessage("");
                 }}
               />
             </label>
           </div>
+
+          <fieldset className="goal-days-fieldset">
+            <legend>Daily goal schedule</legend>
+
+            <p>
+              Excluded days are not used when calculating the automatic daily
+              target.
+            </p>
+
+            <div className="goal-day-options">
+              <label className="goal-day-option">
+                <input
+                  type="checkbox"
+                  checked={excludeSaturday}
+                  onChange={(event) => {
+                    setExcludeSaturday(event.target.checked);
+                    setMessage("");
+                  }}
+                />
+
+                <span>Exclude Saturday</span>
+              </label>
+
+              <label className="goal-day-option">
+                <input
+                  type="checkbox"
+                  checked={excludeSunday}
+                  onChange={(event) => {
+                    setExcludeSunday(event.target.checked);
+                    setMessage("");
+                  }}
+                />
+
+                <span>Exclude Sunday</span>
+              </label>
+            </div>
+          </fieldset>
 
           {message && <p className="set-goal-message">{message}</p>}
 
@@ -242,7 +298,6 @@ function SetGoalsCard() {
       ) : (
         <div className="all-goals-set">
           <CheckCircle2 size={20} />
-
           <span>All three category goals are active.</span>
         </div>
       )}
@@ -274,6 +329,11 @@ function SetGoalsCard() {
             <p className="goal-lock-warning">
               Once confirmed, this goal cannot be changed until the current{" "}
               {pendingGoal.period === "weekly" ? "week" : "month"} ends.
+            </p>
+
+            <p className="goal-confirm-schedule">
+              Daily target schedule:{" "}
+              <strong>{getScheduleLabel(pendingGoal.excludedWeekdays)}</strong>
             </p>
 
             <div className="goal-confirm-actions">

@@ -10,6 +10,7 @@
 
   background: var(--card);
   border-radius: var(--radius);
+
   box-shadow: var(--shadow);
 
   transition:
@@ -18,11 +19,10 @@
 }
 
 .hero-card:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
-}
 
-/* Greeting section */
+  transform: translateY(-2px);
+}
 
 .hero-date {
   margin: 0;
@@ -64,8 +64,6 @@
   line-height: 1.6;
 }
 
-/* Today's Focus section */
-
 .hero-focus {
   padding-left: clamp(26px, 4vw, 48px);
 
@@ -83,8 +81,6 @@
   font-size: 14px;
   font-weight: 600;
 }
-
-/* Hours and minutes arranged vertically */
 
 .focus-time {
   display: flex;
@@ -114,47 +110,6 @@
   letter-spacing: -0.03em;
 }
 
-/* Progress */
-
-.focus-progress {
-  width: 100%;
-
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  margin-bottom: 14px;
-}
-
-.progress-track {
-  flex: 1;
-  height: 10px;
-
-  background: var(--hover-bg);
-  border-radius: 999px;
-
-  overflow: hidden;
-}
-
-.progress-value {
-  height: 100%;
-
-  background: var(--primary);
-  border-radius: 999px;
-
-  transition: width 0.4s ease;
-}
-
-.progress-percentage {
-  min-width: 38px;
-
-  color: var(--text-light);
-
-  font-size: 13px;
-  font-weight: 700;
-  text-align: right;
-}
-
 .focus-status {
   margin: 0;
 
@@ -164,32 +119,33 @@
   font-weight: 600;
 }
 
-/* Responsive mobile layout */
+.hero-goal-sections {
+  display: grid;
+  gap: 20px;
 
-@media (max-width: 700px) {
-  .hero-card {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-
-  .hero-focus {
-    padding-top: 26px;
-    padding-left: 0;
-
-    border-top: 1px solid var(--border);
-    border-left: none;
-  }
-
-  .focus-progress {
-    max-width: 420px;
-  }
+  width: 100%;
 }
+
+.hero-goal-section {
+  min-width: 0;
+}
+
+.hero-goal-section-title {
+  margin: 0 0 10px;
+
+  color: var(--text-light);
+
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .hero-goals {
   display: grid;
   gap: 12px;
 
   width: 100%;
-  margin-top: 22px;
 }
 
 .hero-goal-row {
@@ -231,15 +187,28 @@
   border-radius: 50%;
 }
 
-.hero-goal-track {
+.hero-goal-track,
+.hero-goal-rest-track {
   width: 100%;
   height: 6px;
 
   overflow: hidden;
 
-  background: var(--input-bg);
-
   border-radius: 999px;
+}
+
+.hero-goal-track {
+  background: var(--input-bg);
+}
+
+.hero-goal-rest-track {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--input-bg),
+    var(--input-bg) 7px,
+    var(--border) 7px,
+    var(--border) 10px
+  );
 }
 
 .hero-goal-value {
@@ -267,7 +236,29 @@
   font-weight: 600;
 }
 
-.hero-goals + .focus-status,
+.hero-goal-sections + .focus-status,
 .hero-no-goals + .focus-status {
-  margin-top: 14px;
+  margin-top: 16px;
+}
+
+@media (max-width: 700px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .hero-focus {
+    padding-top: 26px;
+    padding-left: 0;
+
+    border-top: 1px solid var(--border);
+    border-left: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card,
+  .hero-goal-value {
+    transition: none;
+  }
 }

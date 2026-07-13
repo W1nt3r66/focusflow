@@ -1,17 +1,9 @@
 import { useContext } from "react";
-import {
-  Bell,
-  Download,
-  Info,
-  Monitor,
-  Moon,
-  Sun,
-  UserRound,
-  X,
-} from "lucide-react";
+import { Info, Monitor, Moon, Sun, UserRound, X } from "lucide-react";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { SettingsContext } from "../context/SettingsContext";
+import AnalyticsExport from "./AnalyticsExport";
 import "./SettingsDrawer.css";
 
 function SettingsDrawer({ isOpen, onClose }) {
@@ -118,38 +110,11 @@ function SettingsDrawer({ isOpen, onClose }) {
 
           <section className="settings-section">
             <div className="settings-section-heading">
-              <h3>Notifications</h3>
-              <p>Reminder controls will be added later.</p>
-            </div>
-
-            <div className="settings-row disabled-row">
-              <Bell size={19} />
-
-              <div>
-                <strong>Activity reminders</strong>
-                <small>Coming soon</small>
-              </div>
-            </div>
-          </section>
-
-          <section className="settings-section">
-            <div className="settings-section-heading">
               <h3>Data</h3>
-              <p>Export functionality will be connected later.</p>
+              <p>Export activities for a selected date range.</p>
             </div>
 
-            <button
-              type="button"
-              className="settings-row settings-action"
-              disabled
-            >
-              <Download size={19} />
-
-              <div>
-                <strong>Export activities</strong>
-                <small>Coming soon</small>
-              </div>
-            </button>
+            <AnalyticsExport settingsMode />
           </section>
 
           <section className="settings-section settings-about">
